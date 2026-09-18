@@ -5,6 +5,8 @@ import sklearn
 import mmcv
 import os
 import warnings
+import torch.multiprocessing as mp
+mp.set_start_method('fork', force=True)
 from mmcv import Config, DictAction
 from mmcv.cnn import fuse_conv_bn
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
@@ -228,7 +230,7 @@ def main():
     fp16_cfg = cfg.get('fp16', None)
     if fp16_cfg is not None:
         wrap_fp16_model(model_multi_agents)
-    checkpoint = load_checkpoint(model_multi_agents, args.checkpoint, map_location='cpu')
+    checkpoint = load_checkpoint(model_multi_agents, args.checkpoint, map_location='cpu', strict=False)
     if args.fuse_conv_bn:
         model_multi_agents = fuse_conv_bn(model_multi_agents)
     # old versions did not save class info in checkpoints, this walkaround is

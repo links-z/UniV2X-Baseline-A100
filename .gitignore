@@ -150,3 +150,13 @@ debug/
 projects/work_dirs_*
 val/
 datasets
+
+# Local IDE settings
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Training outputs
+work_dirs_e2e_univ2x/
