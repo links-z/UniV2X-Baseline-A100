@@ -470,6 +470,7 @@ class OccHead(BaseModule):
                     gt_img_is_valid=None,
                     w_label=True,
                     other_agent_results=None,
+                    g012_meta=None,
                 ):
         
         out_dict = dict()
@@ -586,18 +587,42 @@ class OccHead(BaseModule):
                 gt_cell_valid_mask = (gt_occ != self.ignore_index)
 
                 # Move all to CPU and numpy
+                if g012_meta is None:
+                    g012_meta = {}
+
+                scene_token = g012_meta.get("scene_token", "")
+                sample_idx = g012_meta.get("sample_idx", "")
+                sample_timestamp = g012_meta.get("timestamp", "")
                 export_data = {
                     "Pv": fusion_aux["Pv"][0].cpu().numpy().astype(np.float32),
                     "Pi_aligned": fusion_aux["Pi_aligned"][0].cpu().numpy().astype(np.float32),
+
                     "Ov": fusion_aux["Ov"][0].cpu().numpy().astype(np.uint8),
                     "Oi": fusion_aux["Oi"][0].cpu().numpy().astype(np.uint8),
                     "Oofficial": fusion_aux["Oofficial"][0].cpu().numpy().astype(np.uint8),
+
                     "GT": gt_occ[0].cpu().numpy().astype(np.int16),
-                    "gt_cell_valid_mask": gt_cell_valid_mask[0].cpu().numpy().astype(np.uint8),
-                    "future_valid_mask": future_valid_mask[0].cpu().numpy().astype(np.uint8),
-                    "warp_valid_mask": fusion_aux["warp_valid_mask"][0].cpu().numpy().astype(np.uint8),
+
+                    "gt_cell_valid_mask":
+                        gt_cell_valid_mask[0].cpu().numpy().astype(np.uint8),
+
+                    "future_valid_mask":
+                        future_valid_mask[0].cpu().numpy().astype(np.uint8),
+
+                    "warp_valid_mask":
+                        fusion_aux["warp_valid_mask"][0]
+                        .cpu().numpy().astype(np.uint8),
+
                     "test_seg_thresh": self.test_seg_thresh,
                     "export_idx": export_idx,
+
+                    # metadata
+                    "scene_token": np.asarray(str(scene_token)),
+                    "sample_idx": np.asarray(str(sample_idx)),
+                    "timestamp": np.asarray(
+                                            sample_timestamp,
+                                            dtype=np.float64
+                                        ),
                 }
 
                 export_path = os.path.join(

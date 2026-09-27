@@ -353,17 +353,57 @@ class UniV2X(UniV2XTrack):
         outs_occ = dict()
         if self.with_occ_head:
             occ_no_query = outs_motion['track_query'].shape[1] == 0
+
+            # ============================================================
+            # G0/G1/G2 metadata
+            # img_metas is already flattened above:
+            # img_metas[0] -> current sample metadata dict
+            # ============================================================
+            if timestamp is None:
+                g012_timestamp = float("nan")
+            elif torch.is_tensor(timestamp):
+                g012_timestamp = float(
+                    timestamp.detach().cpu().reshape(-1)[0].item()
+                )
+            else:
+                g012_timestamp = float(timestamp)
+
+            g012_meta = {
+                "scene_token": img_metas[0].get("scene_token", ""),
+                "sample_idx": img_metas[0].get("sample_idx", ""),
+                "timestamp": g012_timestamp,
+            }
+
             outs_occ = self.occ_head.forward_test(
-                bev_embed, 
+                bev_embed,
                 outs_motion,
-                no_query = occ_no_query,
+                no_query=occ_no_query,
                 gt_segmentation=gt_segmentation,
                 gt_instance=gt_instance,
                 gt_img_is_valid=gt_occ_img_is_valid,
                 w_label=w_label,
-                other_agent_results=other_agent_results
+                other_agent_results=other_agent_results,
+                g012_meta=g012_meta,
             )
+
             result[0]['occ'] = outs_occ
+
+
+
+        # outs_occ = dict()
+        # if self.with_occ_head:
+        #     occ_no_query = outs_motion['track_query'].shape[1] == 0
+        #     outs_occ = self.occ_head.forward_test(
+        #         bev_embed,
+        #         outs_motion,
+        #         no_query = occ_no_query,
+        #         gt_segmentation=gt_segmentation,
+        #         gt_instance=gt_instance,
+        #         gt_img_is_valid=gt_occ_img_is_valid,
+        #         w_label=w_label,
+        #         other_agent_results=other_agent_results
+        #     )
+        #     result[0]['occ'] = outs_occ
         
         if self.with_planning_head:
             result_planning = self.planning_head.forward_test(bev_embed, outs_motion, outs_occ, command, drivable_pred)
