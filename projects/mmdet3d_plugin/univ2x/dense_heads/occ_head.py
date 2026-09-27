@@ -7,6 +7,8 @@ from einops import rearrange
 from mmdet.core import reduce_mean
 from mmcv.cnn.bricks.transformer import build_transformer_layer_sequence
 import copy
+import os
+import numpy as np
 from .occ_head_plugin import MLP, BevFeatureSlicer, SimpleConv2d, CVT_Decoder, Bottleneck, UpsamplingAdd, \
                              predict_instance_segmentation_and_trajectories
 
@@ -180,9 +182,32 @@ class OccHead(BaseModule):
         self.loss_mask = build_loss(loss_mask)
 
         self.pan_eval = pan_eval
-        self.test_seg_thresh  = test_seg_thresh
-
+        self.test_seg_thresh = test_seg_thresh
         self.test_with_track_score = test_with_track_score
+
+        # [DEBUG] one-shot sanity print flags
+        self._debug_ft_once = False
+        self._debug_fusion_once = False
+
+        # [DEBUG] alignment statistics for first N cooperative samples
+        self._align_diag_count = 0
+        self._align_diag_limit = 50
+
+        self._align_valid_ratio_sum = 0.0
+        self._align_zero_valid_samples = 0
+        self._align_zero_active_samples = 0
+        self._align_inf_active_sum = 0
+        self._align_aligned_active_sum = 0
+
+        # ===== G0/G1/G2 offline export =====
+        self._g012_export_dir = os.environ.get(
+            "UNIV2X_G012_EXPORT_DIR", "")
+        self._g012_export_limit = int(
+            os.environ.get("UNIV2X_G012_EXPORT_LIMIT", "-1"))
+        self._g012_export_idx = 0
+        if self._g012_export_dir and self.is_ego_agent:
+            os.makedirs(self._g012_export_dir, exist_ok=True)
+
         self.init_weights()
 
     def init_weights(self):
@@ -478,13 +503,38 @@ class OccHead(BaseModule):
         else:
             pred_seg_scores = torch.zeros([b,5,200,200]).to(bev_feat) # [b, t, h, w] hard code
 
+        # [DEBUG] one-shot sanity check: dtype / range / q dim (pre-fusion)
+        if not self._debug_ft_once:
+            tag = "EGO" if getattr(self, 'is_ego_agent', False) else "INF"
+            print(f"\n===== [DEBUG forward_test | {tag}] =====")
+            print("no_query:", no_query)
+            print("is_old_mode:", self.is_old_mode)
+            if pred_ins_logits.numel() > 0:
+                print("pred_ins_logits:", tuple(pred_ins_logits.shape),
+                      pred_ins_logits.dtype,
+                      pred_ins_logits.min().item(), pred_ins_logits.max().item())
+            else:
+                print("pred_ins_logits:", tuple(pred_ins_logits.shape), "(empty, q=0)")
+            if pred_ins_sigmoid.numel() > 0:
+                print("pred_ins_sigmoid:", tuple(pred_ins_sigmoid.shape),
+                      pred_ins_sigmoid.dtype,
+                      pred_ins_sigmoid.min().item(), pred_ins_sigmoid.max().item())
+            else:
+                print("pred_ins_sigmoid:", tuple(pred_ins_sigmoid.shape), "(empty, q=0)")
+            print("pred_seg_scores (pre-fusion):", tuple(pred_seg_scores.shape),
+                  pred_seg_scores.dtype,
+                  pred_seg_scores.min().item(), pred_seg_scores.max().item())
+            print("=====================================\n")
+            self._debug_ft_once = True
+
+        fusion_aux = None
         if self.is_ego_agent and self.is_cooperation and other_agent_results:
             for other_agent_name, other_agent_result in other_agent_results.items():
                 if 'univ2x_occ_prob_data' not in other_agent_results[other_agent_name][0]['occ']:
                     import pdb;pdb.set_trace()
                 other_agent_occ_data = other_agent_results[other_agent_name][0]['occ']['univ2x_occ_prob_data']
                 other_agent_occ_data = torch.stack([other_agent_occ_data], dim=0)
-                new_pred_seg_scores, new_inf_occ = self.occ_prob_fusion(pred_seg_scores, other_agent_occ_data, other_agent_results[other_agent_name][0]['ego2other_rt'])   # [1, t, h, w]   
+                new_pred_seg_scores, new_inf_occ, fusion_aux = self.occ_prob_fusion(pred_seg_scores, other_agent_occ_data, other_agent_results[other_agent_name][0]['ego2other_rt'])   # [1, t, h, w]
                 pred_seg_scores = new_pred_seg_scores
         
         seg_out = (pred_seg_scores > self.test_seg_thresh).long().unsqueeze(2)  # [b, t, 1, h, w]
@@ -502,6 +552,64 @@ class OccHead(BaseModule):
 
         if not self.is_ego_agent and self.return_occ_data:
             out_dict['univ2x_occ_prob_data'] = pred_seg_scores[0]
+
+        # ============================================================
+        # G0/G1/G2 offline export
+        # Only export from ego cooperative OccHead with GT
+        # ============================================================
+        if (
+            self.is_ego_agent
+            and fusion_aux is not None
+            and w_label
+            and self._g012_export_dir
+        ):
+            do_export = (
+                self._g012_export_limit < 0
+                or self._g012_export_idx < self._g012_export_limit
+            )
+            if do_export:
+                export_idx = self._g012_export_idx
+
+                # GT: [1, 5, 1, 200, 200] -> [1, 5, 200, 200]
+                gt_occ = out_dict["seg_gt"].squeeze(2)
+
+                # Same temporal validity rule as training code
+                frame_valid_mask = gt_img_is_valid.bool()
+                past_valid_mask = frame_valid_mask[:, :self.receptive_field]
+                future_valid_mask = frame_valid_mask[
+                    :, (self.receptive_field - 1):
+                ].clone()
+                past_valid = past_valid_mask.all(dim=1)
+                future_valid_mask[~past_valid] = False
+
+                # Preserve ignore_index information
+                gt_cell_valid_mask = (gt_occ != self.ignore_index)
+
+                # Move all to CPU and numpy
+                export_data = {
+                    "Pv": fusion_aux["Pv"][0].cpu().numpy().astype(np.float32),
+                    "Pi_aligned": fusion_aux["Pi_aligned"][0].cpu().numpy().astype(np.float32),
+                    "Ov": fusion_aux["Ov"][0].cpu().numpy().astype(np.uint8),
+                    "Oi": fusion_aux["Oi"][0].cpu().numpy().astype(np.uint8),
+                    "Oofficial": fusion_aux["Oofficial"][0].cpu().numpy().astype(np.uint8),
+                    "GT": gt_occ[0].cpu().numpy().astype(np.int16),
+                    "gt_cell_valid_mask": gt_cell_valid_mask[0].cpu().numpy().astype(np.uint8),
+                    "future_valid_mask": future_valid_mask[0].cpu().numpy().astype(np.uint8),
+                    "warp_valid_mask": fusion_aux["warp_valid_mask"][0].cpu().numpy().astype(np.uint8),
+                    "test_seg_thresh": self.test_seg_thresh,
+                    "export_idx": export_idx,
+                }
+
+                export_path = os.path.join(
+                    self._g012_export_dir,
+                    f"sample_{export_idx:05d}.npz"
+                )
+                np.savez_compressed(export_path, **export_data)
+
+                self._g012_export_idx += 1
+
+                if export_idx == 0 or (export_idx + 1) % 10 == 0:
+                    print(f"[G0 Export] Saved {export_idx + 1} samples to {self._g012_export_dir}")
 
         return out_dict
 
@@ -531,26 +639,166 @@ class OccHead(BaseModule):
         add_ones = torch.ones((bs, self.bev_h, self.bev_w, 1), dtype=bev_grid.dtype, device=bev_grid.device)
         bev_grid = torch.cat((bev_grid, add_ones), dim=-1)
         bev_grid = bev_grid @ veh2inf_rt
+
+        # [DEBUG] 保存归一化前的路侧物理坐标，便于检查
+        bev_grid_metric = bev_grid[..., :-1].clone()
+
         # compute sample location in inf bev feature
         bev_grid = bev_grid[..., :-1]
         bev_grid[..., 0:1] = (2 * bev_grid[..., 0:1] - (self.inf_pc_range[3] - self.inf_pc_range[0])) / (self.inf_pc_range[3] - self.inf_pc_range[0]) # [0, 100]
         bev_grid[..., 1:2] = (2 * bev_grid[..., 1:2]) / (self.inf_pc_range[4] - self.inf_pc_range[1]) # [-50, 50]
 
-        new_inf_occ= F.grid_sample(inf_occ, bev_grid, align_corners=True)
+        # ===== 统一计算 warp_valid_mask =====
+        grid_x = bev_grid[..., 0]
+        grid_y = bev_grid[..., 1]
+        warp_valid_mask = (
+            (grid_x >= -1.0) & (grid_x <= 1.0) &
+            (grid_y >= -1.0) & (grid_y <= 1.0)
+        )  # [bs, h, w]
+
+        # [DEBUG] 检查 alignment sampling grid（与末尾 fusion DEBUG 共用 flag，仅此块不置位）
+        if not self._debug_fusion_once:
+            print("\n===== [DEBUG alignment grid] =====")
+            print("transformed metric x range:",
+                  bev_grid_metric[..., 0].min().item(),
+                  bev_grid_metric[..., 0].max().item())
+            print("transformed metric y range:",
+                  bev_grid_metric[..., 1].min().item(),
+                  bev_grid_metric[..., 1].max().item())
+            print("bev_grid normalized x range:",
+                  grid_x.min().item(), grid_x.max().item())
+            print("bev_grid normalized y range:",
+                  grid_y.min().item(), grid_y.max().item())
+            print("valid grid ratio:", warp_valid_mask.float().mean().item())
+            print("valid grid count:", warp_valid_mask.sum().item(),
+                  "/", warp_valid_mask.numel())
+            print("veh2inf_rt:")
+            print(veh2inf_rt)
+            print("inf_occ > threshold count:",
+                  (inf_occ > self.test_seg_thresh).sum().item())
+            print("==================================\n")
+        new_inf_occ = F.grid_sample(inf_occ, bev_grid, align_corners=True)
+
+        # ===== 前 50 个样本 alignment 统计 =====
+        if self._align_diag_count < self._align_diag_limit:
+            self._align_diag_count += 1
+            idx = self._align_diag_count
+
+            valid_grid_ratio = warp_valid_mask.float().mean().item()
+            valid_grid_count = warp_valid_mask.sum().item()
+            total_grid_count = warp_valid_mask.numel()
+
+            inf_active_count = (
+                inf_occ > self.test_seg_thresh
+            ).sum().item()
+
+            aligned_active_count = (
+                new_inf_occ > self.test_seg_thresh
+            ).sum().item()
+
+            aligned_nonzero_count = (
+                new_inf_occ != 0
+            ).sum().item()
+
+            self._align_valid_ratio_sum += valid_grid_ratio
+            self._align_inf_active_sum += inf_active_count
+            self._align_aligned_active_sum += aligned_active_count
+
+            if valid_grid_count == 0:
+                self._align_zero_valid_samples += 1
+
+            if aligned_active_count == 0:
+                self._align_zero_active_samples += 1
+
+            print(
+                f"[ALIGN {idx:02d}/{self._align_diag_limit}] "
+                f"valid_ratio={valid_grid_ratio:.4f} | "
+                f"valid_grid={valid_grid_count}/{total_grid_count} | "
+                f"inf>thr={inf_active_count} | "
+                f"aligned_nonzero={aligned_nonzero_count} | "
+                f"aligned>thr={aligned_active_count}"
+            )
+
+            if idx == self._align_diag_limit:
+                print("\n========== [ALIGNMENT SUMMARY] ==========")
+                print("samples:", self._align_diag_count)
+                print(
+                    "mean valid_grid_ratio:",
+                    self._align_valid_ratio_sum / self._align_diag_count
+                )
+                print(
+                    "zero-valid-grid samples:",
+                    self._align_zero_valid_samples,
+                    "/",
+                    self._align_diag_count
+                )
+                print(
+                    "zero-aligned-active samples:",
+                    self._align_zero_active_samples,
+                    "/",
+                    self._align_diag_count
+                )
+                print(
+                    "total original inf > threshold:",
+                    self._align_inf_active_sum
+                )
+                print(
+                    "total aligned inf > threshold:",
+                    self._align_aligned_active_sum
+                )
+                print("=========================================\n")
+        # ========================================
 
         veh_occ_log = (veh_occ > self.test_seg_thresh).long()
         inf_occ_log = (new_inf_occ > self.test_seg_thresh).long()
 
-        fused_occ = []            
-        for i in range(self.n_future+1):
-            max_values, _ = torch.max(torch.stack([veh_occ_log[:,i],inf_occ_log[:,i]]),dim=0)  #[b,200,200]
+        fused_occ = []
+        for i in range(self.n_future + 1):
+            max_values, _ = torch.max(
+                torch.stack([veh_occ_log[:, i], inf_occ_log[:, i]]),
+                dim=0
+            )
             cur_fused_occ = max_values.unsqueeze(1)
-            
             fused_occ.append(cur_fused_occ)
-        
-        fused_occ = torch.stack(fused_occ,dim=2).squeeze(1) #[b,5,200,200]
-        
-        return fused_occ, inf_occ_log
+
+        fused_occ = torch.stack(fused_occ, dim=2).squeeze(1)
+
+        # [DEBUG] one-shot sanity check inside fusion: transmitted dtype/range & binary uniques
+        if not self._debug_fusion_once:
+            print("\n===== [DEBUG occ_prob_fusion] =====")
+            print("veh_occ:", tuple(veh_occ.shape), veh_occ.dtype,
+                  veh_occ.min().item(), veh_occ.max().item())
+            print("inf_occ (transmitted):", tuple(inf_occ.shape), inf_occ.dtype,
+                  inf_occ.min().item(), inf_occ.max().item())
+            print("new_inf_occ (aligned):", tuple(new_inf_occ.shape), new_inf_occ.dtype,
+                  new_inf_occ.min().item(), new_inf_occ.max().item())
+            print("test_seg_thresh:", self.test_seg_thresh)
+            print("veh_occ_log unique:", torch.unique(veh_occ_log))
+            print("inf_occ_log unique:", torch.unique(inf_occ_log))
+            print("fused_occ:", tuple(fused_occ.shape), fused_occ.dtype,
+                  "unique:", torch.unique(fused_occ))
+            print("===================================\n")
+            self._debug_fusion_once = True
+
+        # Official OR sanity check
+        official_check = torch.maximum(veh_occ_log, inf_occ_log)
+        if not torch.equal(fused_occ.long(), official_check.long()):
+            raise RuntimeError("Official OccFusion != Ov OR Oi")
+
+        fusion_aux = {
+            # Soft probability
+            "Pv": veh_occ.detach(),
+            "Pi_aligned": new_inf_occ.detach(),
+            # Binary occupancy
+            "Ov": veh_occ_log.detach(),
+            "Oi": inf_occ_log.detach(),
+            # Official binary OR
+            "Oofficial": fused_occ.detach(),
+            # Spatial validity of infrastructure warp
+            "warp_valid_mask": warp_valid_mask.detach(),
+        }
+
+        return fused_occ, inf_occ_log, fusion_aux
     
     def get_ins_seg_gt(self, gt_instance):
         ins_gt_old = gt_instance  # Not consecutive, 0 for bg, otherwise ins_ind(start from 1)
