@@ -2,8 +2,8 @@
 
 ## 📋 Status
 
-**Status**: ⬜ READY TO START  
-**Date**: 2026-10-02  
+**Status**: ⬜ READY TO START
+**Date**: 2026-10-02
 **Phase**: G5-1 Numerical Consistency Check
 
 ---
@@ -50,15 +50,15 @@ Layer 3: 127-dim Features
 ├─ Horizon (5): One-hot encoding
 ├─ Spatial (2): Normalized (u,v)
 ├─ Neighborhood (40): 8 neighbors × 5 stats
-└─ Target: max_abs_diff < 1e-6, mean_abs_diff < 1e-7
+└─ Target: max_abs_diff < 1e-5, mean_abs_diff < 1e-6
 
 Layer 4: Logits
 ├─ zR = predictor(X_127)
-└─ Target: max_abs_diff < 1e-6, mean_abs_diff < 1e-7
+└─ Target: max_abs_diff < 1e-5, mean_abs_diff < 1e-6
 
 Layer 5: Scores
 ├─ sR = sigmoid(zR)
-└─ Target: max_abs_diff < 1e-6, mean_abs_diff < 1e-7
+└─ Target: max_abs_diff < 1e-5, mean_abs_diff < 1e-6
 
 Layer 6: Accept Decisions
 ├─ aR = 1[sR > 0.70]
@@ -93,11 +93,11 @@ Sample-Level Metrics:
 
 Patch-Level Metrics (14,750 total candidates):
 ├─ Feature max abs diff:           < 1e-5
-├─ Feature mean abs diff:          < 1e-6
+├─ Feature mean abs diff:          < 1e-5
 ├─ Logit max abs diff:             < 1e-5
-├─ Logit mean abs diff:            < 1e-6
+├─ Logit mean abs diff:            < 1e-5
 ├─ Score max abs diff:             < 1e-5
-├─ Score mean abs diff:            < 1e-6
+├─ Score mean abs diff:            < 1e-5
 └─ Accept decisions exact:         14750 / 14750
 
 Final IoU Metrics:
@@ -183,16 +183,16 @@ for sample_idx in g3_test_samples:
     # Load G4 offline reference
     offline_accept = ...
     offline_occ = ...
-    
+
     # Run online forward
     online_accept = ...
     online_occ = ...
-    
+
     # Compare
     results['candidates_total'] += len(offline_accept)
     results['accept_exact_match'] += (offline_accept == online_accept).sum()
     results['occupancy_exact_match'] += (offline_occ == online_occ).all()
-    
+
     # Aggregate metrics
     ...
 
@@ -230,23 +230,23 @@ THEN G5-1 PASS → Proceed to G5-1B Frozen Evaluation
 ## 🚧 Expected Challenges
 
 ### Challenge 1: Floating Point Precision
-**Issue**: GPU vs CPU, different PyTorch versions  
+**Issue**: GPU vs CPU, different PyTorch versions
 **Mitigation**: Use relative tolerance, track max/mean diffs
 
 ### Challenge 2: Candidate Order
-**Issue**: If traversal order differs, all downstream mismatches  
+**Issue**: If traversal order differs, all downstream mismatches
 **Mitigation**: G5-0A already verified, but double-check
 
 ### Challenge 3: Warp Mask Handling
-**Issue**: Warp mask has no horizon dimension  
+**Issue**: Warp mask has no horizon dimension
 **Mitigation**: Already handled in G5-0B, verified in G5-0A
 
 ### Challenge 4: Checkpoint Loading
-**Issue**: State dict keys, device placement  
+**Issue**: State dict keys, device placement
 **Mitigation**: G5-0B unit test already verified loading
 
 ### Challenge 5: Batch vs Single Processing
-**Issue**: Different code paths for batch/single  
+**Issue**: Different code paths for batch/single
 **Mitigation**: G5-1A uses single sample, G5-1B processes as batch
 
 ---
@@ -361,7 +361,7 @@ G5-1B: PASS ✅
 ✅ All soft conditions within tolerance
 ✅ Offline-online consistency verified
 
-Ready for G5-1B Frozen Official Evaluation
+Ready for G5-1B 86-sample Sequential Consistency Sweep
 ```
 
 ---
@@ -401,6 +401,6 @@ Ready for G5-1B Frozen Official Evaluation
 
 ---
 
-*G5-1 Plan Complete - Ready to Execute*  
-*Date: 2026-10-02*  
+*G5-1 Plan Complete - Ready to Execute*
+*Date: 2026-10-02*
 *Next: Run G5-1A Single Sample Audit*

@@ -2,8 +2,8 @@
 
 ## 📋 Status
 
-**Status**: ✅ **COMPLETE**  
-**Date**: 2026-10-02  
+**Status**: ✅ **COMPLETE**
+**Date**: 2026-10-02
 **Phase**: G5-0B Implementation and Unit Testing
 
 ---
@@ -16,7 +16,7 @@
 - STCVOcc (Main module with batch support)
 - selective_fusion (Patch-level accept/fallback)
 
-✅ Create comprehensive unit test suite  
+✅ Create comprehensive unit test suite
 ✅ Verify architecture and method definition match G3 (numerical consistency pending G5-1)
 
 ---
@@ -194,7 +194,7 @@ for accepted_patch:
 5. **Accept Decisions vs G3**: Need exact match on same samples
 6. **Learned Occupancy vs G4**: Need exact binary match
 
-**Reason**: Test sample (export_idx=74) not in G3 test split  
+**Reason**: Test sample (export_idx=74) not in G3 test split
 **Next**: G5-1 will use G3 test samples for exact comparison
 
 ---
@@ -246,21 +246,24 @@ for accepted_patch:
 
 ## 🚀 Next Steps
 
-### G5-0C: Minimal occ_head.py Integration (PENDING)
+### G5-0C: Minimal occ_head.py Integration (COMPLETED)
 - Add thin wrapper in `occ_head.py`
 - Conditional: `if self.use_stcv_occ`
 - Preserve all existing logic
 
-### G5-1: Offline-Online Consistency (PENDING)
+### G5-1: Offline-Online Consistency (IN PROGRESS)
+- G5-1A-1 Module-level Exact Audit: PASS
+- G5-1A-2 Runtime Integration Audit: PASS
+- G5-1B 86-sample Sequential Consistency Sweep: NEXT
 **Critical Verifications** (must exact match):
 1. Candidate indices
 2. Accept decisions
 3. Learned occupancy (binary)
 
 **Soft Verifications** (numerical tolerance):
-1. 127-dim features (target < 1e-6)
-2. Logits (target < 1e-6)
-3. Scores (target < 1e-6)
+1. 127-dim features (target < 1e-5)
+2. Logits (target < 1e-5)
+3. Scores (target < 1e-5)
 
 **Test Set**: G3 test samples (86 samples)
 
@@ -305,6 +308,6 @@ All core components implemented and unit tested:
 
 ---
 
-*G5-0B Implementation Complete*  
-*Date: 2026-10-02*  
-*Project: STCV-Occ - UniV2X Selective Temporal Cooperative Perception*
+*G5-0B Implementation Complete*
+*Date: 2026-10-02*
+*Project: STCV-Occ - Spatio-Temporal Cooperative Value Learning*

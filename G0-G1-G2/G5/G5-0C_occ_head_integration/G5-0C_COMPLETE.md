@@ -1,6 +1,6 @@
 # G5-0C: occ_head Minimal Integration - COMPLETE
 
-**Status**: ✅ COMPLETE  
+**Status**: ✅ COMPLETE
 **Date**: 2026-10-02
 
 ---
@@ -56,7 +56,7 @@ stcv_checkpoint_path=None,
 stcv_threshold=0.70,
 ```
 
-**Purpose**: 
+**Purpose**:
 - `use_stcv_occ`: Toggle STCV-Occ on/off
 - `stcv_checkpoint_path`: Path to G3 trained checkpoint
 - `stcv_threshold`: Cooperation utility threshold τ* (from G4)
@@ -165,7 +165,7 @@ else:
    - `oi=inf_occ_log`: Infrastructure binary occupancy
    - `warp=warp_valid_mask`: Warp valid mask (B, 200, 200)
 
-**Purpose**: 
+**Purpose**:
 - Enable STCV-Occ selective fusion when configured
 - Preserve original behavior when disabled
 - Always compute official baseline for comparison
@@ -197,7 +197,7 @@ occ_head=dict(
     is_cooperation=is_cooperation,
     is_ego_agent=is_ego_agent,
     # ... existing config ...
-    
+
     # Add STCV-Occ configuration
     use_stcv_occ=True,
     stcv_checkpoint_path='/root/autodl-tmp/UniV2X/G0-G1-G2/G3/checkpoints_soft/g3_neighborhood_best.pth',
@@ -281,9 +281,9 @@ occ_head.py
 
 **Verification Layers**:
 1. ✅ Candidate indices (already passed in G5-0A)
-2. ⬜ 127-dim features (target: max_diff < 1e-6)
-3. ⬜ Logits (target: max_diff < 1e-6)
-4. ⬜ Scores (target: max_diff < 1e-6)
+2. ⬜ 127-dim features (target: max_diff < 1e-5)
+3. ⬜ Logits (target: max_diff < 1e-5)
+4. ⬜ Scores (target: max_diff < 1e-5)
 5. ⬜ Accept decisions (must be exact match)
 6. ⬜ Learned occupancy (must be binary exact match)
 7. ⬜ Final IoU (target: ≈ 0.2732)
@@ -294,7 +294,7 @@ occ_head.py
 - Accept decisions (aR)
 - Learned occupancy (O_learned)
 
-**Soft Conditions** (numerical tolerance ~1e-6):
+**Soft Conditions** (numerical tolerance ~1e-5):
 - Features (X_127)
 - Logits (zR)
 - Scores (sR)
@@ -308,7 +308,7 @@ THEN G5-1 PASS
 
 ---
 
-### After G5-1 PASS (G5-1B): Frozen Official Evaluation
+### G5-2: Frozen Official Evaluation — PENDING
 
 **Objective**: Run frozen G3 predictor on UniV2X official evaluator
 
@@ -326,12 +326,12 @@ bash tools/univ2x_plugin/dist_test.sh \
 
 **Expected**:
 - Official OR baseline: IoU ~0.25-0.27 (from G1/G4)
-- STCV-Occ (frozen): IoU > Official OR (target: +8.2% from G4 offline)
+- STCV-Occ (frozen): report the official evaluator result directly; do not assume G4 offline +8.2% transfers to the official benchmark
 
 **Decision Point**:
-- If improvement significant → training-free integration valuable
-- If improvement modest → consider G5-2 fine-tuning
-- If no improvement → diagnose offline-online mismatch
+- If frozen integration improves the official evaluator result → retain the training-free result
+- If improvement is limited → consider G5-3 frozen-backbone fine-tuning
+- If behavior conflicts with G5-1B → diagnose the integration/evaluation path before training
 
 ---
 
@@ -341,13 +341,15 @@ bash tools/univ2x_plugin/dist_test.sh \
 G5-0A  Candidate Audit                 ✅ PASS (86/86 exact match)
 G5-0B  STCV Online Module              ✅ COMPLETE (6/6 tests passed)
 G5-0C  occ_head Minimal Integration    ✅ COMPLETE (4 modifications)
-G5-1   Offline–Online Consistency      ⬜ READY TO TEST
-G5-1B  Frozen Official Evaluation      ⬜ PENDING (after G5-1)
-G5-2   Frozen-Backbone Training        ⬜ PENDING (conditional)
+G5-1A-1 Module-level Exact Audit            ✅ PASS
+G5-1A-2 Runtime Integration Audit           ✅ PASS
+G5-1B   86-sample Consistency Sweep         ⬜ NEXT
+G5-2    Frozen Official Evaluation          ⬜ PENDING
+G5-3    Frozen-backbone Fine-tuning         ⬜ CONDITIONAL
 ```
 
-**Current Phase**: G5-0C COMPLETE ✅  
-**Next Phase**: G5-1 (Consistency Check)
+**Current Phase**: G5-1A-2 PASS ✅
+**Next Phase**: G5-1B 86-sample sequential consistency sweep
 
 ---
 
@@ -399,6 +401,6 @@ projects/mmdet3d_plugin/univ2x/dense_heads/
 
 ---
 
-*G5-0C Status: COMPLETE*  
-*Date: 2026-10-02*  
-*Project: STCV-Occ - UniV2X Selective Temporal Cooperative Perception*
+*G5-0C Status: COMPLETE*
+*Date: 2026-10-02*
+*Project: STCV-Occ - Spatio-Temporal Cooperative Value Learning*

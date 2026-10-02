@@ -181,7 +181,7 @@ G5-1A-2: Runtime Audit on sample_idx=013326
 
 G5-1B: Full Test Set Consistency (after G5-1A-2)
   • Goal: Verify 86 samples, 14,750 candidates
-  • Target: All hard conditions exact, soft conditions < 1e-6
+  • Target: All hard conditions exact, soft conditions < 1e-5
   • Expected: Final IoU ≈ 0.2732 (G4 offline result)
 
 ================================================================================

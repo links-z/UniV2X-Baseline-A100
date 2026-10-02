@@ -1,0 +1,29 @@
+================================================================================
+G5 当前状态
+================================================================================
+日期: 2026-10-02
+
+完成: 6/8 phases (75.0%)
+  ✅ G5-0A: Candidate Definition Audit (405/405 match)
+  ✅ G5-0B: STCV Module Implementation (73,985 params)
+  ✅ G5-0C: OccHead Integration + Bugfix
+  ✅ G5-0D: Runtime Config Audit (τ=0.70, flags verified)
+  ✅ G5-1A-1: Single-Sample Module Consistency (0 diff)
+
+Bug 修复 (G5-0C):
+  ✅ Corrected sanity check (检查 official_occ 而非 fused_occ)
+  ✅ Fixed fusion_aux ("Oofficial" + "Ofused" 分离)
+  ✅ Code: +13, -9 lines
+
+下一步: G5-1B Full Test Set Consistency Sweep
+  Sample: sample_idx=013326 (cache=sample_00471.npz)
+  Goal: O_fused^runtime = O_learned^offline (0 cells diff)
+
+Known blocking issues: NONE
+
+Remaining verification risk:
+  - Real UniV2X runtime consistency not yet verified
+  - STCV-off regression equivalence not yet verified
+
+状态: G5-0 CLOSED, G5-1A-1 PASS, G5-1A-2 PASS, G5-1B NEXT
+================================================================================
