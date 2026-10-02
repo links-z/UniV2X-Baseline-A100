@@ -1,0 +1,383 @@
+{
+  "learned_predictor": {
+    "threshold": 0.7,
+    "val": {
+      "overall": {
+        "n_total": 18555,
+        "n_beneficial": 3003,
+        "n_harmful": 15552,
+        "n_accepted": 5691,
+        "accept_rate": 0.3067097817299919,
+        "ba_retention": 0.4875124875124875,
+        "ha_admission": 0.27179783950617287
+      },
+      "per_horizon": {
+        "0": {
+          "total": 3747,
+          "beneficial": 535,
+          "harmful": 3212,
+          "accepted": 1256,
+          "accept_rate": 0.3352014945289565,
+          "ba_retention": 0.525233644859813,
+          "ha_admission": 0.3035491905354919
+        },
+        "1": {
+          "total": 3700,
+          "beneficial": 640,
+          "harmful": 3060,
+          "accepted": 1239,
+          "accept_rate": 0.3348648648648649,
+          "ba_retention": 0.49375,
+          "ha_admission": 0.30163398692810456
+        },
+        "2": {
+          "total": 3902,
+          "beneficial": 682,
+          "harmful": 3220,
+          "accepted": 1141,
+          "accept_rate": 0.29241414659149156,
+          "ba_retention": 0.44574780058651026,
+          "ha_admission": 0.25993788819875774
+        },
+        "3": {
+          "total": 3902,
+          "beneficial": 638,
+          "harmful": 3264,
+          "accepted": 1051,
+          "accept_rate": 0.2693490517683239,
+          "ba_retention": 0.4702194357366771,
+          "ha_admission": 0.23008578431372548
+        },
+        "4": {
+          "total": 3304,
+          "beneficial": 508,
+          "harmful": 2796,
+          "accepted": 1004,
+          "accept_rate": 0.30387409200968524,
+          "ba_retention": 0.5177165354330708,
+          "ha_admission": 0.26502145922746784
+        }
+      }
+    },
+    "test": {
+      "overall": {
+        "n_total": 14750,
+        "n_beneficial": 2082,
+        "n_harmful": 12668,
+        "n_accepted": 2793,
+        "accept_rate": 0.18935593220338984,
+        "ba_retention": 0.37752161383285304,
+        "ha_admission": 0.15843069150615724
+      },
+      "per_horizon": {
+        "0": {
+          "total": 3073,
+          "beneficial": 492,
+          "harmful": 2581,
+          "accepted": 696,
+          "accept_rate": 0.2264887731858119,
+          "ba_retention": 0.4247967479674797,
+          "ha_admission": 0.1886865555986052
+        },
+        "1": {
+          "total": 2857,
+          "beneficial": 546,
+          "harmful": 2311,
+          "accepted": 669,
+          "accept_rate": 0.23416170808540426,
+          "ba_retention": 0.38461538461538464,
+          "ha_admission": 0.19861531804413673
+        },
+        "2": {
+          "total": 3111,
+          "beneficial": 478,
+          "harmful": 2633,
+          "accepted": 613,
+          "accept_rate": 0.19704275152684025,
+          "ba_retention": 0.32217573221757323,
+          "ha_admission": 0.17432586403342196
+        },
+        "3": {
+          "total": 3120,
+          "beneficial": 354,
+          "harmful": 2766,
+          "accepted": 484,
+          "accept_rate": 0.15512820512820513,
+          "ba_retention": 0.3389830508474576,
+          "ha_admission": 0.13159797541576285
+        },
+        "4": {
+          "total": 2589,
+          "beneficial": 212,
+          "harmful": 2377,
+          "accepted": 331,
+          "accept_rate": 0.12784859018926226,
+          "ba_retention": 0.4386792452830189,
+          "ha_admission": 0.10012620950778292
+        }
+      }
+    }
+  },
+  "confidence_baseline": {
+    "val": {
+      "0.0": {
+        "accept_rate": 0.9385610347615198,
+        "ba_retention": 0.9327339327339327,
+        "ha_admission": 0.9396862139917695,
+        "precision": 0.16083835773758254,
+        "recall": 0.9327339327339327,
+        "n_accepted": 17415
+      },
+      "0.01": {
+        "accept_rate": 0.9229857181352735,
+        "ba_retention": 0.9157509157509157,
+        "ha_admission": 0.9243827160493827,
+        "precision": 0.16057456498890577,
+        "recall": 0.9157509157509157,
+        "n_accepted": 17126
+      },
+      "0.02": {
+        "accept_rate": 0.8846133117758017,
+        "ba_retention": 0.8864468864468864,
+        "ha_admission": 0.8842592592592593,
+        "precision": 0.16217862800048738,
+        "recall": 0.8864468864468864,
+        "n_accepted": 16414
+      },
+      "0.03": {
+        "accept_rate": 0.83761789275128,
+        "ba_retention": 0.8598068598068598,
+        "ha_admission": 0.8333333333333334,
+        "precision": 0.166130485137048,
+        "recall": 0.8598068598068598,
+        "n_accepted": 15542
+      },
+      "0.04": {
+        "accept_rate": 0.7900835354351927,
+        "ba_retention": 0.8371628371628371,
+        "ha_admission": 0.7809927983539094,
+        "precision": 0.17148703956343792,
+        "recall": 0.8371628371628371,
+        "n_accepted": 14660
+      },
+      "0.05": {
+        "accept_rate": 0.7471301535974131,
+        "ba_retention": 0.8145188145188145,
+        "ha_admission": 0.7341177983539094,
+        "precision": 0.176440885811152,
+        "recall": 0.8145188145188145,
+        "n_accepted": 13863
+      },
+      "0.06": {
+        "accept_rate": 0.70767987065481,
+        "ba_retention": 0.7935397935397935,
+        "ha_admission": 0.6911008230452675,
+        "precision": 0.18147894295940903,
+        "recall": 0.7935397935397935,
+        "n_accepted": 13131
+      },
+      "0.07": {
+        "accept_rate": 0.6712476421449745,
+        "ba_retention": 0.7715617715617715,
+        "ha_admission": 0.6518775720164609,
+        "precision": 0.186029706945002,
+        "recall": 0.7715617715617715,
+        "n_accepted": 12455
+      },
+      "0.08": {
+        "accept_rate": 0.6377256804095931,
+        "ba_retention": 0.752913752913753,
+        "ha_admission": 0.6154835390946503,
+        "precision": 0.19107580495225218,
+        "recall": 0.752913752913753,
+        "n_accepted": 11833
+      },
+      "0.09": {
+        "accept_rate": 0.6090541632983023,
+        "ba_retention": 0.7349317349317349,
+        "ha_admission": 0.5847479423868313,
+        "precision": 0.19529245199539863,
+        "recall": 0.7349317349317349,
+        "n_accepted": 11301
+      },
+      "0.1": {
+        "accept_rate": 0.5841013203988143,
+        "ba_retention": 0.717948717948718,
+        "ha_admission": 0.5582561728395061,
+        "precision": 0.19892969182505998,
+        "recall": 0.717948717948718,
+        "n_accepted": 10838
+      },
+      "0.12": {
+        "accept_rate": 0.5446510374562112,
+        "ba_retention": 0.6903096903096904,
+        "ha_admission": 0.5165252057613169,
+        "precision": 0.2051256679200475,
+        "recall": 0.6903096903096904,
+        "n_accepted": 10106
+      },
+      "0.15": {
+        "accept_rate": 0.4910266774454325,
+        "ba_retention": 0.6493506493506493,
+        "ha_admission": 0.46045524691358025,
+        "precision": 0.2140270003292723,
+        "recall": 0.6493506493506493,
+        "n_accepted": 9111
+      },
+      "0.2": {
+        "accept_rate": 0.4219886822958771,
+        "ba_retention": 0.5894105894105894,
+        "ha_admission": 0.3896604938271605,
+        "precision": 0.2260536398467433,
+        "recall": 0.5894105894105894,
+        "n_accepted": 7830
+      },
+      "0.25": {
+        "accept_rate": 0.36750202101859336,
+        "ba_retention": 0.5401265401265402,
+        "ha_admission": 0.3341692386831276,
+        "precision": 0.2378647895585863,
+        "recall": 0.5401265401265402,
+        "n_accepted": 6819
+      },
+      "0.3": {
+        "accept_rate": 0.3197520883858798,
+        "ba_retention": 0.4858474858474858,
+        "ha_admission": 0.28768004115226337,
+        "precision": 0.24591269172425417,
+        "recall": 0.4858474858474858,
+        "n_accepted": 5933
+      }
+    },
+    "test": {
+      "0.0": {
+        "accept_rate": 0.9338305084745763,
+        "ba_retention": 0.9000960614793467,
+        "ha_admission": 0.9393748026523524,
+        "precision": 0.13605343400609846,
+        "recall": 0.9000960614793467,
+        "n_accepted": 13774
+      },
+      "0.01": {
+        "accept_rate": 0.9168135593220339,
+        "ba_retention": 0.8751200768491835,
+        "ha_admission": 0.9236659299021156,
+        "precision": 0.1347334171411669,
+        "recall": 0.8751200768491835,
+        "n_accepted": 13523
+      },
+      "0.02": {
+        "accept_rate": 0.8820338983050847,
+        "ba_retention": 0.8434197886647454,
+        "ha_admission": 0.8883801705083676,
+        "precision": 0.1349730976172175,
+        "recall": 0.8434197886647454,
+        "n_accepted": 13010
+      },
+      "0.03": {
+        "accept_rate": 0.8349830508474576,
+        "ba_retention": 0.8112391930835735,
+        "ha_admission": 0.8388853804862646,
+        "precision": 0.13713868139006172,
+        "recall": 0.8112391930835735,
+        "n_accepted": 12316
+      },
+      "0.04": {
+        "accept_rate": 0.7862372881355932,
+        "ba_retention": 0.7824207492795389,
+        "ha_admission": 0.7868645405746764,
+        "precision": 0.14046736224885747,
+        "recall": 0.7824207492795389,
+        "n_accepted": 11597
+      },
+      "0.05": {
+        "accept_rate": 0.7311186440677966,
+        "ba_retention": 0.7449567723342939,
+        "ha_admission": 0.7288443321755604,
+        "precision": 0.14382418397626112,
+        "recall": 0.7449567723342939,
+        "n_accepted": 10784
+      },
+      "0.06": {
+        "accept_rate": 0.6835254237288135,
+        "ba_retention": 0.7098943323727186,
+        "ha_admission": 0.6791916640353647,
+        "precision": 0.1465978972426106,
+        "recall": 0.7098943323727186,
+        "n_accepted": 10082
+      },
+      "0.07": {
+        "accept_rate": 0.6383050847457628,
+        "ba_retention": 0.6815561959654178,
+        "ha_admission": 0.6311967161351437,
+        "precision": 0.15071694105151354,
+        "recall": 0.6815561959654178,
+        "n_accepted": 9415
+      },
+      "0.08": {
+        "accept_rate": 0.5964745762711864,
+        "ba_retention": 0.6589817483189241,
+        "ha_admission": 0.5862014524786865,
+        "precision": 0.15594453284837462,
+        "recall": 0.6589817483189241,
+        "n_accepted": 8798
+      },
+      "0.09": {
+        "accept_rate": 0.5602033898305084,
+        "ba_retention": 0.6407300672430355,
+        "ha_admission": 0.5469687401326176,
+        "precision": 0.16144257533583445,
+        "recall": 0.6407300672430355,
+        "n_accepted": 8263
+      },
+      "0.1": {
+        "accept_rate": 0.5264406779661017,
+        "ba_retention": 0.6248799231508165,
+        "ha_admission": 0.5102620776760342,
+        "precision": 0.1675466838377334,
+        "recall": 0.6248799231508165,
+        "n_accepted": 7765
+      },
+      "0.12": {
+        "accept_rate": 0.47396610169491526,
+        "ba_retention": 0.579250720461095,
+        "ha_admission": 0.4566624565835175,
+        "precision": 0.17250750965527106,
+        "recall": 0.579250720461095,
+        "n_accepted": 6991
+      },
+      "0.15": {
+        "accept_rate": 0.41694915254237286,
+        "ba_retention": 0.5379442843419788,
+        "ha_admission": 0.39706346700347334,
+        "precision": 0.1821138211382114,
+        "recall": 0.5379442843419788,
+        "n_accepted": 6150
+      },
+      "0.2": {
+        "accept_rate": 0.348,
+        "ba_retention": 0.47982708933717577,
+        "ha_admission": 0.32633407009788445,
+        "precision": 0.1946230274693162,
+        "recall": 0.47982708933717577,
+        "n_accepted": 5133
+      },
+      "0.25": {
+        "accept_rate": 0.2934237288135593,
+        "ba_retention": 0.4274735830931796,
+        "ha_admission": 0.27139248500157875,
+        "precision": 0.205637707948244,
+        "recall": 0.4274735830931796,
+        "n_accepted": 4328
+      },
+      "0.3": {
+        "accept_rate": 0.24901694915254238,
+        "ba_retention": 0.3818443804034582,
+        "ha_admission": 0.22718661193558573,
+        "precision": 0.2164443234413286,
+        "recall": 0.3818443804034582,
+        "n_accepted": 3673
+      }
+    }
+  }
+}

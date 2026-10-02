@@ -1,0 +1,31 @@
+{
+  "model": "mlp",
+  "best_epoch": 15,
+  "best_val_auprc": 0.2038058555968325,
+  "validation_threshold": 0.51,
+  "val_metrics": {
+    "auroc": 0.58980281549726,
+    "auprc": 0.2038058555968325,
+    "accuracy": 0.5479385610347616,
+    "precision": 0.2059626515234247,
+    "recall": 0.6280386280386281,
+    "f1": 0.3101973684210526,
+    "threshold": 0.51,
+    "positive_rate_gt": 0.1618431689571544,
+    "positive_rate_pred": 0.4935057935866343
+  },
+  "test_metrics": {
+    "auroc": 0.6066039385509853,
+    "auprc": 0.1873399733696023,
+    "accuracy": 0.5724745762711865,
+    "precision": 0.18383233532934132,
+    "recall": 0.5898174831892411,
+    "f1": 0.2803013010728144,
+    "threshold": 0.51,
+    "positive_rate_gt": 0.14115254237288136,
+    "positive_rate_pred": 0.4528813559322034
+  },
+  "random_test_auprc_reference": 0.1411525458097458,
+  "num_parameters": 18689,
+  "seed": 2026
+}

@@ -1,0 +1,31 @@
+{
+  "model": "horizon",
+  "best_epoch": 6,
+  "best_val_auprc": 0.16426899860407063,
+  "validation_threshold": 0.01,
+  "val_metrics": {
+    "auroc": 0.5045596978467348,
+    "auprc": 0.16426899860407063,
+    "accuracy": 0.1618431689571544,
+    "precision": 0.1618431689571544,
+    "recall": 1.0,
+    "f1": 0.2785972724742555,
+    "threshold": 0.01,
+    "positive_rate_gt": 0.1618431689571544,
+    "positive_rate_pred": 1.0
+  },
+  "test_metrics": {
+    "auroc": 0.5845428222783768,
+    "auprc": 0.1704980197700024,
+    "accuracy": 0.14115254237288136,
+    "precision": 0.14115254237288136,
+    "recall": 1.0,
+    "f1": 0.24738593155893535,
+    "threshold": 0.01,
+    "positive_rate_gt": 0.14115254237288136,
+    "positive_rate_pred": 1.0
+  },
+  "random_test_auprc_reference": 0.1411525458097458,
+  "num_parameters": 225,
+  "seed": 2026
+}

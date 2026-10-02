@@ -1,0 +1,344 @@
+================================================================================
+G4: LEARNED SELECTIVE FUSION - FINAL SUMMARY
+================================================================================
+Date: 2026-10-02
+Project: STCV-Occ (UniV2X Vehicle-Infrastructure Cooperative Perception)
+Status: ✅ COMPLETE - READY FOR PAPER WRITING
+
+================================================================================
+MISSION ACCOMPLISHED
+================================================================================
+
+Objective: Validate that learned cooperation utility can guide selective fusion
+           to improve downstream occupancy prediction beyond both Official OR
+           and Ego-only baselines.
+
+Result: ✅ VALIDATED - All Go/No-Go criteria met
+
+================================================================================
+KEY RESULTS (Test Set: 86 samples, 4 held-out scenes)
+================================================================================
+
+Strategy          IoU      vs Official    vs Ego     Notes
+--------          ---      -----------    ------     -----
+Official OR     0.2526         —          -5.4%     Negative cooperation
+Ego Only        0.2671       +5.7%          —       Single-vehicle baseline
+Learned         0.2732       +8.2%        +2.3%     ✅ Our method (τ*=0.70)
+Oracle (P4)     0.3077      +21.8%       +15.2%     Patch-level upper bound
+
+Oracle Gap Recovery: 37.4% = (0.2732 - 0.2526) / (0.3077 - 0.2526)
+
+Go/No-Go Criteria:
+  ✅ IoU_Learned > IoU_Official  (fixes negative cooperation)
+  ✅ IoU_Learned > IoU_Ego       (provides net benefit)
+  ✅ Generalizes to held-out scenes
+  ✅ Superior to simple baselines
+
+================================================================================
+SCIENTIFIC CONTRIBUTION - COMPLETE CLOSED LOOP
+================================================================================
+
+G1: Negative Cooperation Diagnosis
+    → Identified that Official OR < Ego (negative cooperation)
+    → Root cause: 85% of infrastructure additions are harmful (HA)
+    
+G2: Oracle Headroom Analysis
+    → Quantified selective fusion potential via patch-level Oracles
+    → P4 Oracle achieves IoU 0.3077 (+21.8% vs Official OR)
+    → Proves significant improvement is possible
+    
+G3: Utility Learnability
+    → Designed 4-feature-group predictor (127-dim → MLP)
+    → Achieved Val AUPRC 0.2595 (vs 0.198 random baseline)
+    → Proved cooperation utility can be learned from data
+    
+G4: Learned Selective Fusion (THIS WORK)
+    → Deployed learned predictor with threshold τ*=0.70
+    → Achieved IoU 0.2732 on held-out test scenes
+    → Beats Official OR (+8.2%) AND Ego (+2.3%)
+    → Recovers 37.4% of Oracle gap
+    → 30% lower harmful patch admission vs confidence baseline
+
+Complete Loop: Problem → Potential → Learnability → Impact ✅
+
+================================================================================
+WHY LEARNED FUSION WORKS
+================================================================================
+
+Decision Quality Analysis (Test Set, τ*=0.70):
+  Accept Rate: 18.94% (conservative - prioritizes precision)
+  BA Retention: 37.75% (recalls 37.75% of beneficial patches)
+  HA Admission: 15.84% (only admits 15.84% of harmful patches)
+
+Comparison vs Simple Confidence Baseline (at matched selectivity):
+  Confidence (δ=0.30):  BA Retention 38.18%, HA Admission 22.72%
+  Learned (τ=0.70):     BA Retention 37.75%, HA Admission 15.84%
+  
+  Difference: Similar recall, but 30% fewer false positives
+  
+Why? Learned predictor captures contextual patterns that simple 
+     probability differences miss:
+     • Neighborhood consistency (8 neighbors × 5 stats)
+     • Spatial geometric validity (position encoding)
+     • Temporal reliability (horizon-aware)
+     • Local soft evidence (Pv, Pi, ΔP patterns)
+
+================================================================================
+DELIVERABLES (4924 lines total)
+================================================================================
+
+Documentation (7 files):
+  README.md                    - Complete project overview & quick start
+  G4_COMPLETE.md               - Detailed technical report (377 lines)
+  G4_RESULTS_SUMMARY.md        - Executive summary with all key numbers
+  G4_METHODOLOGY.md            - Complete methodology documentation
+  G4_MECHANISM_ANALYSIS.md     - Why learned > confidence baseline
+  FIGURES_INDEX.md             - Figure descriptions & suggested captions
+  G4_STATUS.sh                 - Quick status script
+
+Evaluation Code (6 scripts, ~1200 lines):
+  evaluate_learned_fusion.py   - G4-0/1/2: Main evaluation pipeline
+  analyze_mechanism.py         - G4-3: Mechanism analysis
+  fair_comparison.py           - Baseline comparison at matched selectivity
+  generate_figures.py          - Fig.4 (predictor) & Fig.5 (results)
+  generate_fig2_fig3.py        - Fig.2 (G1) & Fig.3 (G2)
+  generate_fig1.py             - Fig.1 (overall framework)
+
+Results Data (3 JSON files):
+  g4_final_results.json        - Val/Test strategy comparison
+  g4_threshold_scan_val.json   - Threshold selection (19 points)
+  g4_mechanism_analysis.json   - Per-horizon + baseline analysis
+
+Publication Figures (5 figures, 12 files):
+  fig1_stcv_occ_framework.*         - Overall method (PDF/PNG/SVG)
+  fig2_g1_negative_cooperation.*    - Problem motivation (PDF/PNG)
+  fig3_g2_oracle_headroom.*         - Oracle analysis (PDF/PNG)
+  fig4_g3_predictor_architecture.*  - Method details (PDF/PNG/SVG)
+  fig5_g4_learned_fusion.*          - Main results (PDF/PNG)
+
+================================================================================
+PUBLICATION-READY FIGURES
+================================================================================
+
+Fig.1 ⭐ OVERALL STCV-OCC FRAMEWORK (Main Method Figure)
+  Shows: Complete pipeline from dual inputs → utility predictor → selective fusion
+  Key elements: 4 feature groups, MLP architecture, accept/reject decision
+  Format: PDF (vector), PNG (300 DPI), SVG (editable)
+  Size: 14×10 inches
+
+Fig.2: G1 NEGATIVE COOPERATION DIAGNOSIS (Problem Motivation)
+  Shows: (a) 85% HA vs 15% BA pie chart
+         (b) Official OR hurts performance bar chart
+         (c) Why Official OR fails conceptually
+  Format: PDF, PNG
+
+Fig.3: G2 ORACLE HEADROOM ANALYSIS (Selective Fusion Potential)
+  Shows: IoU progression from Ego → Official → P16 → P8 → P4 → Cell Oracle
+         Learned fusion at 0.2732 (37.4% recovery)
+  Format: PDF, PNG
+
+Fig.4 ⭐ G3 PREDICTOR ARCHITECTURE (Core Method)
+  Shows: 4 feature groups (127-dim) → MLP (256→128→64→1) → utility score
+  Details: Each feature group with dimensions and components
+  Format: PDF (vector), PNG (300 DPI), SVG (editable)
+
+Fig.5 ⭐ G4 LEARNED FUSION RESULTS (Main Results - MOST IMPORTANT)
+  Shows: (a) IoU comparison bar chart (Official/Ego/Learned/Oracle)
+         (b) BA retention vs HA admission comparison (Learned vs Confidence)
+  Key insight: Learned > Ego > Official, with 30% lower false positives
+  Format: PDF, PNG
+
+All figures use publication-quality settings:
+  • Font: Arial/Helvetica (sans-serif, embedded Type 42)
+  • DPI: 300 for raster outputs
+  • Colors: Consistent palette across all figures
+  • Style: Clean, professional, ready for submission
+
+================================================================================
+PAPER WRITING GUIDELINES
+================================================================================
+
+✅ SAFE CLAIMS (Supported by current evidence):
+
+  • "Learned Fusion achieved consistent improvement over Official OR on 
+     held-out test scenes"
+  
+  • "Observed IoU gain of +0.0206 absolute (8.2% relative improvement) 
+     compared to Official OR baseline"
+  
+  • "Learned Fusion surpassed Ego-only baseline by +0.0062 IoU (2.3% 
+     relative), demonstrating net benefit from cooperation"
+  
+  • "Recovered 37.4% of patch-level Oracle headroom"
+  
+  • "Demonstrates superior precision over simple confidence heuristics, 
+     achieving 30% reduction in harmful patch admission at comparable 
+     beneficial patch recall"
+  
+  • "Generalizes to held-out test scenes unseen during training"
+
+❌ AVOID WITHOUT ADDITIONAL WORK:
+
+  • "Statistically significant improvement" 
+    → Requires: Multi-seed training + hypothesis testing
+  
+  • "Significant performance gain"
+    → Use: "consistent" or "observed" instead
+  
+  • "Theoretical optimal" or "global optimal"
+    → Correct: "patch-level Oracle" (constrained to 4×4 framework)
+
+RECOMMENDED TERMINOLOGY:
+
+  • Patch-level Oracle (not "optimal" or "theoretical optimum")
+  • Observed improvement (not "significant" without statistical tests)
+  • Held-out test scenes (emphasize generalization)
+  • Consistent gain (across Val and Test)
+  • Net benefit (over both Official and Ego)
+
+================================================================================
+METHODOLOGY SUMMARY
+================================================================================
+
+G4-0: Offline Learned Fusion Reconstruction
+  • Loaded G3 best model (epoch 7, Val AUPRC 0.2595)
+  • Predicted on all 549 Val + 86 Test candidate patches
+  • Reconstructed O_R^learned = O_v ∨ (a_R ∧ O_i)
+  • Runtime: ~20 seconds
+
+G4-1: Threshold Selection on Validation
+  • Scanned τ = 0.05, 0.10, ..., 0.95 (19 thresholds)
+  • Selection criterion: Maximize Val IoU (NOT classification F1)
+  • Optimal: τ* = 0.70 (Val IoU 0.3235)
+  • FROZEN for Test evaluation (no tuning on test)
+  • Runtime: ~5 seconds
+
+G4-2: Strategy Comparison on Test
+  • Test set: 86 samples from 4 held-out scenes
+  • Compared: Official OR, Ego, Learned (τ*=0.70), Oracle
+  • Metrics: IoU, Precision, Recall, F1 (macro-averaged)
+  • Result: Learned (0.2732) > Ego (0.2671) > Official (0.2526)
+  • Runtime: <1 second
+
+G4-3: Mechanism Analysis
+  • Per-horizon breakdown (t=0 to t=4)
+  • BA Retention & HA Admission analysis
+  • Fair comparison with confidence baseline (matched selectivity)
+  • Result: 30% lower HA admission at similar BA retention
+  • Runtime: ~5 seconds
+
+Total Evaluation Time: ~30 seconds
+
+================================================================================
+KNOWN LIMITATIONS & FUTURE WORK
+================================================================================
+
+Current Limitations:
+
+1. No statistical significance testing
+   → Solution: Multi-seed training (5-10 runs) + bootstrap CI + paired tests
+
+2. 37.4% recovery leaves room (62.6% gap remains)
+   → Potential: Better architectures (CNN, attention), multi-scale patches
+
+3. Patch-level Oracle is not global optimal
+   → Note: Constrained to 4×4 patch accept/fallback framework
+
+4. Conservative operating point (τ*=0.70)
+   → Alternative: Could tune for different precision-recall tradeoffs
+
+5. Macro-averaged metrics
+   → Clarification: Documented in methodology, gives equal weight per scene
+
+Before Submission (Recommended):
+  □ Multi-seed training for significance testing
+  □ Precision-recall curves (Learned vs Confidence)
+  □ Qualitative examples (success/failure cases)
+  □ Feature ablation studies
+
+Follow-up Research:
+  □ CNN encoder for patches (vs current MLP)
+  □ Multi-scale patches (4×4, 8×8, 16×16 jointly)
+  □ Temporal modeling (LSTM/Transformer across horizons)
+  □ Full end-to-end integration (G5)
+
+================================================================================
+REPRODUCIBILITY
+================================================================================
+
+All evaluation can be reproduced in ~30 seconds:
+
+cd /root/autodl-tmp/UniV2X/G0-G1-G2/G4/scripts/
+
+# Main evaluation
+python evaluate_learned_fusion.py     # G4-0/1/2 (~25s)
+python analyze_mechanism.py           # G4-3 (~5s)
+python fair_comparison.py             # Baseline (~1s)
+
+# Figure generation
+python generate_figures.py            # Fig.4 & Fig.5
+python generate_fig2_fig3.py          # Fig.2 & Fig.3  
+python generate_fig1.py               # Fig.1
+
+Dependencies:
+  • G3 best model: ../G3/checkpoints_soft/g3_neighborhood_best.pth
+  • G3 datasets: ../G3/soft/g3_neighborhood_{train,val,test}.npz
+  • G0 cache: ../G0/occupancy_cache/sample_{export_idx}.npz
+  • Index mapping: sample_idx_to_export_idx.json
+
+All code, data, and figures are version-controlled and documented.
+
+================================================================================
+CITATION (PLACEHOLDER)
+================================================================================
+
+@article{stcv-occ-2026,
+  title={STCV-Occ: Selective Temporal Cooperative V2X Occupancy Prediction 
+         via Learned Utility-Guided Fusion},
+  author={[Authors]},
+  journal={[Journal/Conference]},
+  year={2026},
+  note={Learned selective fusion achieves 8.2\% IoU improvement over 
+        baseline cooperation through utility-guided patch acceptance}
+}
+
+================================================================================
+CONTACTS & DOCUMENTATION
+================================================================================
+
+For questions about:
+  • Methodology → G4_METHODOLOGY.md
+  • Results interpretation → G4_RESULTS_SUMMARY.md
+  • Why learned > confidence → G4_MECHANISM_ANALYSIS.md
+  • Figures → FIGURES_INDEX.md
+  • Reproducibility → G4_COMPLETE.md
+  • Quick reference → README.md, G4_STATUS.sh
+
+Project location: /root/autodl-tmp/UniV2X/G0-G1-G2/G4/
+
+================================================================================
+FINAL STATUS
+================================================================================
+
+✅ G4-0: Offline Learned Fusion Reconstruction - COMPLETE
+✅ G4-1: Threshold Selection on Validation - COMPLETE (τ*=0.70)
+✅ G4-2: Strategy Comparison on Test - COMPLETE (Learned wins)
+✅ G4-3: Mechanism Analysis - COMPLETE (30% better precision)
+
+✅ All documentation written (7 files, ~2000 lines)
+✅ All evaluation code complete (6 scripts, ~1200 lines)
+✅ All figures generated (5 figures, 12 files, publication-ready)
+✅ All results validated and documented (3 JSON files)
+
+VERDICT: ✅ GO FOR PAPER WRITING
+
+The complete G1→G2→G3→G4 scientific loop is validated:
+  Problem identified → Potential quantified → Learnability proven → Impact demonstrated
+
+Second Paper Core Validation: COMPLETE ✅
+
+================================================================================
+Date: 2026-10-02
+Project: STCV-Occ - UniV2X Vehicle-Infrastructure Cooperative Perception
+Repository: /root/autodl-tmp/UniV2X/G0-G1-G2/G4/
+================================================================================

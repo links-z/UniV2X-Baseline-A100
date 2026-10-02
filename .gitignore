@@ -160,3 +160,39 @@ __pycache__/
 
 # Training outputs
 work_dirs_e2e_univ2x/
+
+# STCV-Occ G0/G1/G2 generated data
+G0-G1-G2/cache_smoke/
+G0-G1-G2/cache_meta_smoke/
+G0-G1-G2/cache_full/
+
+# G0 generated visualizations
+G0-G1-G2/G0/visualization/
+
+# Generic experiment cache
+G0-G1-G2/**/*.npz
+
+# STCV-Occ generated checkpoints / logs
+G0-G1-G2/**/*.pth
+G0-G1-G2/**/*.pt
+G0-G1-G2/**/*.log
+
+# Runtime cache
+G0-G1-G2/**/__pycache__/
+
+# ============================================================
+# STCV-Occ generated data / checkpoints
+# ============================================================
+
+# Large cached datasets
+G0-G1-G2/**/*.npz
+
+# Learned predictor checkpoints
+G0-G1-G2/**/checkpoints/
+G0-G1-G2/**/checkpoints_soft/
+G0-G1-G2/**/*.pth
+G0-G1-G2/**/*.pt
+
+# Runtime logs / Python cache
+G0-G1-G2/**/*.log
+G0-G1-G2/**/__pycache__/

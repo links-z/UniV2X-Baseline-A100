@@ -1,0 +1,23 @@
+======================================================================
+G3: IDENTITY CONSISTENCY AUDIT REPORT
+======================================================================
+
+Comparison:
+  Cache valid samples     : 549
+  Evaluator valid samples : 549
+  Intersection            : 549
+  Cache only              : 0
+  Evaluator only          : 0
+
+Identity Check: ✓ PASS
+
+Conclusion:
+The 549 valid samples identified by cache (future_valid_mask.all())
+are IDENTICAL to the 549 valid samples identified by evaluator
+(not gt_occ_has_invalid_frame).
+
+This confirms:
+  future_valid_mask.all() ⟺ occ_to_eval
+
+Therefore, G1/G2 analyses are using the exact same 549 samples
+that the official UniV2X baseline evaluator uses for Occupancy IoU.

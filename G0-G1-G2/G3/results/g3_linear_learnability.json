@@ -1,0 +1,31 @@
+{
+  "model": "linear",
+  "best_epoch": 13,
+  "best_val_auprc": 0.1905791587694642,
+  "validation_threshold": 0.52,
+  "val_metrics": {
+    "auroc": 0.5679363717558162,
+    "auprc": 0.1905791587694642,
+    "accuracy": 0.5636755591484774,
+    "precision": 0.20198946752486835,
+    "recall": 0.5747585747585747,
+    "f1": 0.29892622099064775,
+    "threshold": 0.52,
+    "positive_rate_gt": 0.1618431689571544,
+    "positive_rate_pred": 0.46052277014281867
+  },
+  "test_metrics": {
+    "auroc": 0.6066905174853429,
+    "auprc": 0.19405461822046302,
+    "accuracy": 0.5903050847457627,
+    "precision": 0.18235765838011228,
+    "recall": 0.5461095100864554,
+    "f1": 0.2734158951545029,
+    "threshold": 0.52,
+    "positive_rate_gt": 0.14115254237288136,
+    "positive_rate_pred": 0.42271186440677966
+  },
+  "random_test_auprc_reference": 0.1411525458097458,
+  "num_parameters": 81,
+  "seed": 2026
+}

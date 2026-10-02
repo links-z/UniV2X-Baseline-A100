@@ -1,0 +1,31 @@
+{
+  "model": "spatial",
+  "best_epoch": 2,
+  "best_val_auprc": 0.2089386880280284,
+  "validation_threshold": 0.48000000000000004,
+  "val_metrics": {
+    "auroc": 0.5775787676829344,
+    "auprc": 0.2089386880280284,
+    "accuracy": 0.4370250606305578,
+    "precision": 0.18823825081678813,
+    "recall": 0.7482517482517482,
+    "f1": 0.30080321285140565,
+    "threshold": 0.48000000000000004,
+    "positive_rate_gt": 0.1618431689571544,
+    "positive_rate_pred": 0.6433306386418755
+  },
+  "test_metrics": {
+    "auroc": 0.5051350767870029,
+    "auprc": 0.14530788214786933,
+    "accuracy": 0.4855593220338983,
+    "precision": 0.14431524547803617,
+    "recall": 0.5365033621517772,
+    "f1": 0.22744858480961105,
+    "threshold": 0.48000000000000004,
+    "positive_rate_gt": 0.14115254237288136,
+    "positive_rate_pred": 0.5247457627118645
+  },
+  "random_test_auprc_reference": 0.1411525458097458,
+  "num_parameters": 129,
+  "seed": 2026
+}

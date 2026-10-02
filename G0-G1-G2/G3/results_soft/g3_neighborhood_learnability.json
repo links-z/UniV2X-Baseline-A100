@@ -1,0 +1,31 @@
+{
+  "model": "neighborhood",
+  "best_epoch": 7,
+  "best_val_auprc": 0.2595077618283934,
+  "validation_threshold": 0.54,
+  "val_metrics": {
+    "auroc": 0.664577663420256,
+    "auprc": 0.2595077618283934,
+    "accuracy": 0.5563998922123417,
+    "precision": 0.22861295681063123,
+    "recall": 0.7332667332667333,
+    "f1": 0.34855559952512866,
+    "threshold": 0.54,
+    "positive_rate_gt": 0.1618431689571544,
+    "positive_rate_pred": 0.519105362436001
+  },
+  "test_metrics": {
+    "auroc": 0.703514145485065,
+    "auprc": 0.27115333667961505,
+    "accuracy": 0.6255593220338983,
+    "precision": 0.22660098522167488,
+    "recall": 0.6849183477425552,
+    "f1": 0.3405373134328358,
+    "threshold": 0.54,
+    "positive_rate_gt": 0.14115254237288136,
+    "positive_rate_pred": 0.4266440677966102
+  },
+  "random_test_auprc_reference": 0.1411525458097458,
+  "num_parameters": 73985,
+  "seed": 2026
+}
