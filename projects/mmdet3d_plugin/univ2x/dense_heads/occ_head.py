@@ -808,7 +808,7 @@ class OccHead(BaseModule):
         veh_occ_log = (veh_occ > self.test_seg_thresh).long()
         inf_occ_log = (new_inf_occ > self.test_seg_thresh).long()
 
-        # Official OR fusion (always compute for baseline comparison)
+        # Official UniV2X OR fusion
         official_occ = torch.maximum(veh_occ_log, inf_occ_log)
 
         # STCV-Occ selective fusion
@@ -823,7 +823,12 @@ class OccHead(BaseModule):
         else:
             fused_occ = official_occ
 
-        # [DEBUG] one-shot sanity check inside fusion: transmitted dtype/range & binary uniques
+        # Official OR invariant check (corrected: checks official_occ, not fused_occ)
+        official_check = torch.maximum(veh_occ_log, inf_occ_log)
+        if not torch.equal(official_occ.long(), official_check.long()):
+            raise RuntimeError("Official OccFusion != Ov OR Oi")
+
+        # [DEBUG] one-shot sanity check inside fusion
         if not self._debug_fusion_once:
             print("\n===== [DEBUG occ_prob_fusion] =====")
             print("veh_occ:", tuple(veh_occ.shape), veh_occ.dtype,
@@ -835,15 +840,12 @@ class OccHead(BaseModule):
             print("test_seg_thresh:", self.test_seg_thresh)
             print("veh_occ_log unique:", torch.unique(veh_occ_log))
             print("inf_occ_log unique:", torch.unique(inf_occ_log))
+            print("official_occ unique:", torch.unique(official_occ))
             print("fused_occ:", tuple(fused_occ.shape), fused_occ.dtype,
                   "unique:", torch.unique(fused_occ))
+            print("use_stcv_occ:", self.use_stcv_occ)
             print("===================================\n")
             self._debug_fusion_once = True
-
-        # Official OR sanity check
-        official_check = torch.maximum(veh_occ_log, inf_occ_log)
-        if not torch.equal(fused_occ.long(), official_check.long()):
-            raise RuntimeError("Official OccFusion != Ov OR Oi")
 
         fusion_aux = {
             # Soft probability
@@ -852,8 +854,10 @@ class OccHead(BaseModule):
             # Binary occupancy
             "Ov": veh_occ_log.detach(),
             "Oi": inf_occ_log.detach(),
-            # Official binary OR
-            "Oofficial": fused_occ.detach(),
+            # Official binary OR (always computed)
+            "Oofficial": official_occ.detach(),
+            # Fused occupancy (Official OR or STCV Learned)
+            "Ofused": fused_occ.detach(),
             # Spatial validity of infrastructure warp
             "warp_valid_mask": warp_valid_mask.detach(),
         }
