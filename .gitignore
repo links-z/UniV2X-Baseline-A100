@@ -196,3 +196,6 @@ G0-G1-G2/**/*.pt
 # Runtime logs / Python cache
 G0-G1-G2/**/*.log
 G0-G1-G2/**/__pycache__/
+
+# G4 generated figures
+G0-G1-G2/G4/figures/
