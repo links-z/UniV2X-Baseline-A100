@@ -1,0 +1,50 @@
+[STCV-Occ] Loaded G3 checkpoint: /root/autodl-tmp/UniV2X/G0-G1-G2/G3/checkpoints_soft/g3_neighborhood_best.pth
+[STCV-Occ] Predictor parameters: 73985
+[STCV-Occ] Initialized with τ=0.7
+========================================================================================
+G5-1A-2 FINAL RUNTIME INTEGRATION AUDIT
+========================================================================================
+
+========== Runtime Input Reproduction ==========
+Pv max_abs_diff               : 0.0000000000e+00
+Pv mean_abs_diff              : 0.0000000000e+00
+Pi_aligned max_abs_diff       : 0.0000000000e+00
+Pi_aligned mean_abs_diff      : 0.0000000000e+00
+Ov                            : PASS
+Oi                            : PASS
+warp_valid_mask               : PASS
+Oofficial                     : PASS
+
+========== Candidate / Feature ==========
+reference candidates          : 405
+runtime candidates            : 405
+candidate indices exact       : PASS
+feature max_abs_diff          : 0.0000000000e+00
+feature mean_abs_diff         : 0.0000000000e+00
+
+========== Predictor ==========
+logit max_abs_diff            : 0.0000000000e+00
+logit mean_abs_diff           : 0.0000000000e+00
+score max_abs_diff            : 0.0000000000e+00
+score mean_abs_diff           : 0.0000000000e+00
+reference accepted            : 151/405
+runtime accepted              : 151/405
+accept exact                  : PASS
+
+========== Production Output ==========
+reference STCV vs runtime STCV: PASS
+runtime Ofused differing cells: 0
+  t=0 differing cells       : 0
+  t=1 differing cells       : 0
+  t=2 differing cells       : 0
+  t=3 differing cells       : 0
+  t=4 differing cells       : 0
+runtime Ofused exact         : PASS
+
+========== Final ==========
+Soft consistency              : PASS
+Pre-STCV hard consistency     : PASS
+STCV hard consistency         : PASS
+
+FINAL RESULT                  : PASS
+========================================================================================

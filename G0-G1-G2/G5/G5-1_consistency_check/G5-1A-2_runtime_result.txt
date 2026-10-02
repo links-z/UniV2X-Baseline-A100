@@ -1,0 +1,171 @@
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/univ2x/modules/custom_base_transformer_layer.py:77: UserWarning: The arguments `feedforward_channels` in BaseTransformerLayer has been deprecated, now you should set `feedforward_channels` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/univ2x/modules/custom_base_transformer_layer.py:77: UserWarning: The arguments `ffn_dropout` in BaseTransformerLayer has been deprecated, now you should set `ffn_drop` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/univ2x/modules/custom_base_transformer_layer.py:77: UserWarning: The arguments `ffn_num_fcs` in BaseTransformerLayer has been deprecated, now you should set `num_fcs` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/miniconda3/lib/python3.8/site-packages/mmcv/cnn/bricks/transformer.py:341: UserWarning: The arguments `feedforward_channels` in BaseTransformerLayer has been deprecated, now you should set `feedforward_channels` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/miniconda3/lib/python3.8/site-packages/mmcv/cnn/bricks/transformer.py:341: UserWarning: The arguments `ffn_dropout` in BaseTransformerLayer has been deprecated, now you should set `ffn_drop` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/miniconda3/lib/python3.8/site-packages/mmcv/cnn/bricks/transformer.py:341: UserWarning: The arguments `ffn_num_fcs` in BaseTransformerLayer has been deprecated, now you should set `num_fcs` and other FFN related arguments to a dict named `ffn_cfgs`.
+  warnings.warn(
+/root/miniconda3/lib/python3.8/site-packages/mmcv/cnn/bricks/transformer.py:92: UserWarning: The arguments `dropout` in MultiheadAttention has been deprecated, now you can separately set `attn_drop`(float), proj_drop(float), and `dropout_layer`(dict)
+  warnings.warn('The arguments `dropout` in MultiheadAttention '
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/datasets/eval_utils/map_api.py:2108: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  exteriors = [int_coords(poly.exterior.coords) for poly in polygons]
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/datasets/eval_utils/map_api.py:2109: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  interiors = [int_coords(pi.coords) for poly in polygons for pi in poly.interiors]
+/root/autodl-tmp/UniV2X/projects/mmdet3d_plugin/core/bbox/coders/detr3d_track_coder.py:94: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.post_center_range = torch.tensor(
+/root/miniconda3/lib/python3.8/site-packages/torch/_tensor.py:575: UserWarning: floor_divide is deprecated, and will be removed in a future version of pytorch. It currently rounds toward 0 (like the 'trunc' function NOT 'floor'). This results in incorrect rounding for negative values.
+To keep the current behavior, use torch.div(a, b, rounding_mode='trunc'), or for actual floor division, use torch.div(a, b, rounding_mode='floor'). (Triggered internally at  ../aten/src/ATen/native/BinaryOps.cpp:467.)
+  return torch.floor_divide(self, other)
+/root/miniconda3/lib/python3.8/site-packages/torch/nn/functional.py:3609: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  warnings.warn(
+======
+Loading NuScenes tables for version v1.0-trainval...
+4 category,
+0 attribute,
+4 visibility,
+4704 instance,
+4 sensor,
+2 calibrated_sensor,
+2196 ego_pose,
+6 log,
+67 scene,
+2196 sample,
+2196 sample_data,
+54171 sample_annotation,
+6 map,
+Done loading in 1.346 seconds.
+======
+Reverse indexing ...
+Done reverse indexing in 0.2 seconds.
+======
+==========================================================================================
+G5-1A-2 TARGET SAMPLE LOCATED
+==========================================================================================
+sample_idx        : 013326
+dataset index     : 471
+dataset length    : 675
+reference cache   : sample_00471.npz
+==========================================================================================
+WARNING!!!!, Only can be used for obtain inference speed!!!!
+[STCV-Occ] Loaded G3 checkpoint: /root/autodl-tmp/UniV2X/G0-G1-G2/G3/checkpoints_soft/g3_neighborhood_best.pth
+[STCV-Occ] Predictor parameters: 73985
+[STCV-Occ] Initialized with τ=0.7
+[OccHead] STCV-Occ enabled with τ=0.7
+load checkpoint from local path: /root/autodl-tmp/UniV2X/ckpts/univ2x_coop_e2e_stg2.pth
+The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: model_other_agent_inf.linear1.weight, model_other_agent_inf.linear1.bias, model_other_agent_inf.linear2.weight, model_other_agent_inf.linear2.bias, model_other_agent_inf.linear_feat1.weight, model_other_agent_inf.linear_feat1.bias, model_other_agent_inf.linear_feat2.weight, model_other_agent_inf.linear_feat2.bias, model_other_agent_inf.norm_feat.weight, model_other_agent_inf.norm_feat.bias, model_other_agent_inf.norm1.weight, model_other_agent_inf.norm1.bias, model_other_agent_inf.norm2.weight, model_other_agent_inf.norm2.bias, model_other_agent_inf.self_attn.in_proj_weight, model_other_agent_inf.self_attn.in_proj_bias, model_other_agent_inf.self_attn.out_proj.weight, model_other_agent_inf.self_attn.out_proj.bias
+
+missing keys in source state_dict: model_ego_agent.occ_head.stcv_occ.predictor.net.0.weight, model_ego_agent.occ_head.stcv_occ.predictor.net.0.bias, model_ego_agent.occ_head.stcv_occ.predictor.net.3.weight, model_ego_agent.occ_head.stcv_occ.predictor.net.3.bias, model_ego_agent.occ_head.stcv_occ.predictor.net.6.weight, model_ego_agent.occ_head.stcv_occ.predictor.net.6.bias, model_ego_agent.occ_head.stcv_occ.predictor.net.9.weight, model_ego_agent.occ_head.stcv_occ.predictor.net.9.bias
+
+
+==========================================================================================
+RUNNING REAL UNIV2X FORWARD
+==========================================================================================
+
+===== [DEBUG forward_test | INF] =====
+no_query: False
+is_old_mode: False
+pred_ins_logits: (1, 1, 5, 200, 200) torch.float32 -19.135047912597656 8.64960765838623
+pred_ins_sigmoid: (1, 1, 5, 200, 200) torch.float32 4.8950177244933e-09 0.9998248219490051
+pred_seg_scores (pre-fusion): (1, 5, 200, 200) torch.float32 4.8950177244933e-09 0.9998248219490051
+=====================================
+
+
+===== [DEBUG forward_test | EGO] =====
+no_query: False
+is_old_mode: False
+pred_ins_logits: (1, 1, 5, 200, 200) torch.float32 -13.778307914733887 7.414516925811768
+pred_ins_sigmoid: (1, 1, 5, 200, 200) torch.float32 1.0379022796769277e-06 0.999397873878479
+pred_seg_scores (pre-fusion): (1, 5, 200, 200) torch.float32 1.0379022796769277e-06 0.999397873878479
+=====================================
+
+
+===== [DEBUG alignment grid] =====
+transformed metric x range: -28.32281494140625 115.63531494140625
+transformed metric y range: -57.641693115234375 86.26669311523438
+bev_grid normalized x range: -1.5531799793243408 1.2585022449493408
+bev_grid normalized y range: -1.1258143186569214 1.6848963499069214
+valid grid ratio: 0.7788249850273132
+valid grid count: 31153 / 40000
+veh2inf_rt:
+tensor([[[ 0.7354,  0.6774,  0.0000],
+         [-0.6776,  0.7353,  0.0000],
+         [43.6688, 14.3138,  1.0000]]], device='cuda:0')
+inf_occ > threshold count: 3192
+==================================
+
+[ALIGN 01/50] valid_ratio=0.7788 | valid_grid=31153/40000 | inf>thr=3192 | aligned_nonzero=157420 | aligned>thr=3305
+
+===== [DEBUG occ_prob_fusion] =====
+veh_occ: (1, 5, 200, 200) torch.float32 1.0379022796769277e-06 0.999397873878479
+inf_occ (transmitted): (1, 5, 200, 200) torch.float32 4.8950177244933e-09 0.9998248219490051
+new_inf_occ (aligned): (1, 5, 200, 200) torch.float32 0.0 0.999790370464325
+test_seg_thresh: 0.1
+veh_occ_log unique: tensor([0, 1], device='cuda:0')
+inf_occ_log unique: tensor([0, 1], device='cuda:0')
+official_occ unique: tensor([0, 1], device='cuda:0')
+fused_occ: (1, 5, 200, 200) torch.int64 unique: tensor([0, 1], device='cuda:0')
+use_stcv_occ: True
+===================================
+
+[G0 Export] Saved 1 samples to /root/autodl-tmp/UniV2X/G0-G1-G2/G5/G5-1_consistency_check/runtime_013326
+Forward completed.
+
+==========================================================================================
+G5-1A-2 RUNTIME INTEGRATION AUDIT
+==========================================================================================
+
+========== Identity ==========
+sample_idx                    : 013326
+runtime dataset index         : 471
+G0 reference export_idx       : 471
+runtime capture               : sample_00000.npz
+
+========== Runtime vs G0 ==========
+Pv max_abs_diff               : 9.6626687050e-01
+Pv mean_abs_diff              : 1.0870724916e-02
+Pi_aligned max_abs_diff       : 9.9853658676e-01
+Pi_aligned mean_abs_diff      : 1.2729341164e-02
+Ov exact                      : FAIL
+Oi exact                      : FAIL
+warp exact                    : PASS
+Oofficial exact               : FAIL
+
+========== STCV Candidate ==========
+offline candidates            : 405
+runtime candidates            : 318
+candidate exact               : FAIL
+
+========== STCV Feature ==========
+feature max_abs_diff          : inf
+feature mean_abs_diff         : inf
+logit max_abs_diff            : inf
+logit mean_abs_diff           : inf
+score max_abs_diff            : inf
+score mean_abs_diff           : inf
+
+========== STCV Decision ==========
+offline accepted              : 151/405
+runtime accepted              : 60/318
+accept exact                  : FAIL
+
+========== Final Occupancy ==========
+Ofused differing cells        : 3561
+  t=0 differing cells       : 831
+  t=1 differing cells       : 786
+  t=2 differing cells       : 702
+  t=3 differing cells       : 674
+  t=4 differing cells       : 568
+Ofused exact                  : FAIL
+
+========== Final ==========
+Soft consistency              : FAIL
+Hard consistency              : FAIL
+FINAL RESULT                  : FAIL
+==========================================================================================
