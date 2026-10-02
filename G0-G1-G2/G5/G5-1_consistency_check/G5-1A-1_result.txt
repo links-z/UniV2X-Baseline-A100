@@ -1,0 +1,65 @@
+[STCV-Occ] Loaded G3 checkpoint: /root/autodl-tmp/UniV2X/G0-G1-G2/G3/checkpoints_soft/g3_neighborhood_best.pth
+[STCV-Occ] Predictor parameters: 73985
+[STCV-Occ] Initialized with τ=0.7
+========================================================================================
+G5-1A-1 SINGLE-SAMPLE MODULE-LEVEL EXACT AUDIT
+========================================================================================
+
+========== Sample ==========
+sample_idx                     : 013326
+cache                          : sample_00471.npz
+G3 metadata rows               : 9620 ... 10024
+
+========== Candidate ==========
+Offline candidates             : 405
+Online candidates              : 405
+Candidate indices exact        : PASS
+
+========== 127-d Feature ==========
+Offline shape                  : (405, 127)
+Online shape                   : (405, 127)
+Feature max_abs_diff           : 0.0000000000e+00
+Feature mean_abs_diff          : 0.0000000000e+00
+Feature tolerance (1.0e-05)      : PASS
+
+========== Predictor Logit ==========
+Logit max_abs_diff             : 0.0000000000e+00
+Logit mean_abs_diff            : 0.0000000000e+00
+Logit tolerance (1.0e-05)        : PASS
+
+========== Predictor Score ==========
+Score max_abs_diff             : 0.0000000000e+00
+Score mean_abs_diff            : 0.0000000000e+00
+Score tolerance (1.0e-05)        : PASS
+
+========== Accept Decision ==========
+Offline accepted               : 151/405
+Online accepted                : 151/405
+Accept exact                   : 405/405
+Accept mismatches              : 0
+Accept mask exact              : PASS
+
+========== Threshold Margin ==========
+Closest candidate              : (0, 7, 48)
+Closest score to tau           : 0.6994449496
+|score - tau|                  : 5.5503845215e-04
+
+========== Learned Occupancy ==========
+Differing cells total          : 0
+  t=0 differing cells        : 0
+  t=1 differing cells        : 0
+  t=2 differing cells        : 0
+  t=3 differing cells        : 0
+  t=4 differing cells        : 0
+Learned occupancy exact        : PASS
+
+========== Production Path ==========
+_forward_single exact          : PASS
+batch forward exact            : PASS
+
+========== Final ==========
+Soft numerical consistency     : PASS
+Hard exact consistency         : PASS
+
+FINAL RESULT                   : PASS
+========================================================================================
