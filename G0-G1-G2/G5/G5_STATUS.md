@@ -131,7 +131,7 @@ else:
 
 **Verification**:
 - ✅ Python syntax valid (AST parsing passed)
-- ✅ Non-breaking: Original behavior preserved when disabled
+- ⚠️ Design intent: original behavior preserved when disabled; STCV-off regression equivalence remains pending
 - ✅ Official OR always computed for comparison
 - ✅ Configurable via config file
 
@@ -248,45 +248,24 @@ THEN G5-1B PASS
 3. Does offline validation (G4: +8.2%) translate to online eval?
 
 **Decision Point**:
-- If improvement significant → training-free integration is valuable
-- If improvement modest → proceed to G5-2 fine-tuning
-- If no improvement → diagnose mismatch between offline/online
+- If frozen evaluation improves the official metric → retain the training-free integration
+- If improvement is limited → consider G5-3 frozen-backbone fine-tuning
+- If no improvement → analyze why the offline candidate-domain gain does not translate to the official evaluator
 
 **Status**: Pending G5-1 PASS
 
 ---
 
-### G5-2: Frozen Official Evaluation ⬜ PENDING
-
-**Objective**: Validate whether offline gains transfer to online benchmark
-
-**Conditional**: Requires G5-1 PASS
-
-**Key Question**: Does G4's offline +8.2% IoU improvement translate to online performance?
-
-**Approach**:
-```
-Model: STCV-Occ enabled (use_stcv_occ=True, τ=0.70)
-Baseline: Official OR (use_stcv_occ=False)
-Dataset: Full V2XSet test split
-Metrics: IoU, Precision, Recall, F1
-```
-
-**Expected**: Online IoU improvement (magnitude to be determined)
-
-**Status**: Pending G5-1 PASS
-
----
 
 ### G5-3: Frozen-Backbone Fine-tuning ⬜ CONDITIONAL
 
 **Objective**: Fine-tune STCV predictor while freezing UniV2X backbone
 
-**Conditional**: Only if G5-2 shows modest improvement
+**Conditional**: Consider only after G5-2 if frozen performance is limited and further optimization is justified
 
 **Approach**:
 ```
-Freeze: All UniV2X modules (encoder, decoder, occ_head)
+Freeze: Original UniV2X parameters (backbone, encoder, decoder, original occ_head parameters)
 Train: Only STCV predictor (73,985 params)
 Loss: Occupancy IoU (downstream metric)
 Data: Full training set
@@ -377,9 +356,9 @@ Data: Full training set
 2026-10-02: G5-0C occ_head integration + bugfix (COMPLETE)
 2026-10-02: G5-0D runtime config audit (PASS)
 2026-10-02: G5-1A-1 module-level consistency (PASS)
+2026-10-02: G5-1A-2 runtime integration audit (PASS)
 
 Next:
-- G5-1A-2: Runtime integration audit (sample_idx=013326)
 - G5-1B: Full test set consistency (86 samples)
 - G5-2: Frozen official evaluation
 ```
@@ -434,16 +413,16 @@ projects/mmdet3d_plugin/univ2x/dense_heads/
 ⬜ Final IoU ≈ 0.2732
 ```
 
-### G5-1B Success Criteria
+### G5-2 Evaluation Criteria
 ```
-Learned (frozen) > Official OR
+Compare frozen STCV-Occ against Official OR using the official evaluator; report the observed result
 ```
 
 ### Final Success Criteria
 ```
 STCV-Occ integrated into UniV2X
 Offline validation reproduced online
-Official benchmark improvement demonstrated
+Official evaluator result reported and compared against Official OR
 ```
 
 ---
