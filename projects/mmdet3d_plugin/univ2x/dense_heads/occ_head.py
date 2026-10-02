@@ -11,6 +11,7 @@ import os
 import numpy as np
 from .occ_head_plugin import MLP, BevFeatureSlicer, SimpleConv2d, CVT_Decoder, Bottleneck, UpsamplingAdd, \
                              predict_instance_segmentation_and_trajectories
+from .stcv_occ import STCVOcc
 
 def _get_clones(module, N):
     return nn.ModuleList([copy.deepcopy(module) for i in range(N)])
@@ -71,6 +72,10 @@ class OccHead(BaseModule):
                  bev_w=200,
                  pc_range=[-51.2, -51.2, -5.0, 51.2, 51.2, 3.0],
                  inf_pc_range=[0, -51.2, -5.0, 102.4, 51.2, 3.0],
+                 # STCV-Occ
+                 use_stcv_occ=False,
+                 stcv_checkpoint_path=None,
+                 stcv_threshold=0.70,
                  ):
         assert init_cfg is None, 'To prevent abnormal initialization ' \
             'behavior, init_cfg is not allowed to be set'
@@ -88,6 +93,32 @@ class OccHead(BaseModule):
         self.is_ego_agent = is_ego_agent
         self.return_occ_data = return_occ_data
         self.is_old_mode = is_old_mode
+
+        # STCV-Occ initialization
+        self.use_stcv_occ = use_stcv_occ
+        self.stcv_checkpoint_path = stcv_checkpoint_path
+        self.stcv_threshold = stcv_threshold
+        self.stcv_occ = None
+
+        if self.use_stcv_occ:
+            if not self.is_ego_agent:
+                raise ValueError(
+                    "STCV-Occ should only be enabled for the ego OccHead."
+                )
+            if not self.is_cooperation:
+                raise ValueError(
+                    "STCV-Occ requires is_cooperation=True."
+                )
+            if self.stcv_checkpoint_path is None:
+                raise ValueError(
+                    "stcv_checkpoint_path must be provided when use_stcv_occ=True."
+                )
+            self.stcv_occ = STCVOcc(
+                checkpoint_path=self.stcv_checkpoint_path,
+                threshold=self.stcv_threshold,
+            )
+            print(f"[OccHead] STCV-Occ enabled with τ={self.stcv_threshold}")
+
         #bevformer_bev_conf = {
         #    'xbound': [-51.2, 51.2, 0.512],
         #    'ybound': [-51.2, 51.2, 0.512],
@@ -777,16 +808,20 @@ class OccHead(BaseModule):
         veh_occ_log = (veh_occ > self.test_seg_thresh).long()
         inf_occ_log = (new_inf_occ > self.test_seg_thresh).long()
 
-        fused_occ = []
-        for i in range(self.n_future + 1):
-            max_values, _ = torch.max(
-                torch.stack([veh_occ_log[:, i], inf_occ_log[:, i]]),
-                dim=0
-            )
-            cur_fused_occ = max_values.unsqueeze(1)
-            fused_occ.append(cur_fused_occ)
+        # Official OR fusion (always compute for baseline comparison)
+        official_occ = torch.maximum(veh_occ_log, inf_occ_log)
 
-        fused_occ = torch.stack(fused_occ, dim=2).squeeze(1)
+        # STCV-Occ selective fusion
+        if self.use_stcv_occ:
+            fused_occ = self.stcv_occ(
+                pv=veh_occ,
+                pi=new_inf_occ,
+                ov=veh_occ_log,
+                oi=inf_occ_log,
+                warp=warp_valid_mask,
+            )
+        else:
+            fused_occ = official_occ
 
         # [DEBUG] one-shot sanity check inside fusion: transmitted dtype/range & binary uniques
         if not self._debug_fusion_once:
